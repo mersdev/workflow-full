@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mersdev Workflow: CCC Digital Key Owner Pairing with SPAKE2+ & Temporal.io</title>
+    <meta name="description" content="Explore the Mersdev Workflow project, a simulation of Car Connectivity Consortium (CCC) Digital Key owner pairing using SPAKE2+ protocol and Temporal.io for robust workflow orchestration between device and vehicle microservices.">
+    <meta name="keywords" content="Car Connectivity Consortium, CCC, Digital Key, Owner Pairing, SPAKE2+, Temporal.io, Workflow Orchestration, Secure Vehicle Access, Automotive Cybersecurity, Microservices, TLV Encoding, Vehicle-to-Device Communication, Mersdev">
+    <meta name="author" content="Mersdev (Simulated Project)">
+    <!-- Add more meta tags for Open Graph, Twitter Cards etc. for better social sharing -->
+    <link rel="canonical" href="YOUR_CANONICAL_URL_HERE"> <!-- Replace with your actual URL when deployed -->
+
+    <style>
+        :root {
+            --bg-color: #f4f7f9; /* Light grey background */
+            --card-bg-color: #ffffff; /* White card background */
+            --primary-text-color: #2c3e50; /* Dark blue-grey */
+            --secondary-text-color: #57606f; /* Medium grey */
+            --accent-color: #3498db; /* Bright blue for accents */
+            --border-color: #e0e0e0; /* Light border color */
+            --shadow-color: rgba(0, 0, 0, 0.08);
+            --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --border-radius: 12px;
+            --spacing-unit: 1rem; /* 16px */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            color: var(--primary-text-color);
+            line-height: 1.6;
+            padding: calc(var(--spacing-unit) * 2);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: calc(var(--spacing-unit) * 3);
+        }
+
+        header h1 {
+            font-size: 2.8rem;
+            color: var(--accent-color);
+            margin-bottom: calc(var(--spacing-unit) * 0.5);
+        }
+
+        header p.subtitle {
+            font-size: 1.2rem;
+            color: var(--secondary-text-color);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: calc(var(--spacing-unit) * 1.5);
+        }
+
+        .bento-box {
+            background-color: var(--card-bg-color);
+            padding: calc(var(--spacing-unit) * 1.5);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 12px var(--shadow-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .bento-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .bento-box h2 {
+            font-size: 1.5rem;
+            color: var(--accent-color);
+            margin-bottom: var(--spacing-unit);
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: calc(var(--spacing-unit) * 0.5);
+        }
+        .bento-box h3 {
+            font-size: 1.2rem;
+            color: var(--primary-text-color);
+            margin-top: var(--spacing-unit);
+            margin-bottom: calc(var(--spacing-unit) * 0.5);
+        }
+
+        .bento-box p, .bento-box ul, .bento-box pre {
+            margin-bottom: calc(var(--spacing-unit) * 0.75);
+            color: var(--secondary-text-color);
+        }
+
+        .bento-box ul {
+            list-style-position: inside;
+            padding-left: calc(var(--spacing-unit) * 0.5);
+        }
+        .bento-box li {
+            margin-bottom: calc(var(--spacing-unit) * 0.25);
+        }
+
+        .bento-box code {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #eef1f3;
+            padding: 0.2em 0.4em;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: #c7254e; /* Bootstrap's code color */
+        }
+
+        .bento-box pre {
+            background-color: #2d2d2d; /* Dark background for code blocks */
+            color: #f8f8f2; /* Light text for code blocks */
+            padding: var(--spacing-unit);
+            border-radius: var(--border-radius);
+            overflow-x: auto;
+            font-size: 0.85em;
+            white-space: pre-wrap; /* Allows wrapping */
+            word-wrap: break-word; /* Breaks long words */
+        }
+        .bento-box pre code {
+            background-color: transparent;
+            color: inherit;
+            padding: 0;
+            font-size: inherit;
+        }
+
+
+        /* Specific grid spans for some boxes */
+        .bento-box.span-2 {
+            grid-column: span 2; /* Makes a box span two columns */
+        }
+        @media (max-width: 768px) {
+            .bento-box.span-2 {
+                grid-column: span 1; /* Stack on smaller screens */
+            }
+            header h1 {
+                font-size: 2rem;
+            }
+            header p.subtitle {
+                font-size: 1rem;
+            }
+        }
+
+        .architecture-img {
+            width: 100%;
+            max-width: 600px;
+            height: auto;
+            border-radius: var(--border-radius);
+            margin: var(--spacing-unit) auto;
+            display: block;
+            border: 1px solid var(--border-color);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: calc(var(--spacing-unit) * 3);
+            padding: calc(var(--spacing-unit) * 1.5);
+            color: var(--secondary-text-color);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>Mersdev Workflow Full</h1>
+        <p class="subtitle">Simulating Car Connectivity Consortium (CCC) Digital Key Owner Pairing using SPAKE2+ and Temporal.io Workflows</p>
+    </header>
+
+    <main class="bento-grid">
+        <section class="bento-box span-2" id="overview">
+            <h2>Project Overview</h2>
+            <p>The <code>mersdev-workflow-full</code> project provides a comprehensive simulation of the owner pairing process critical for Car Connectivity Consortium (CCC) Digital Key functionality. It demonstrates the secure establishment of a relationship between a device (like a smartphone) and a vehicle using the <strong>SPAKE2+ (Secure Password Authenticated Key Exchange)</strong> protocol. This entire intricate process is orchestrated using <strong>Temporal.io</strong> workflows, ensuring reliability and visibility.</p>
+            <p>This simulation involves two core microservices:</p>
+            <ul>
+                <li><strong>workflow-device:</strong> Represents the end-user's device acting as a digital key.</li>
+                <li><strong>workflow-vehicle:</strong> Represents the vehicle's systems participating in the pairing.</li>
+            </ul>
+            <p>The project highlights how complex, stateful interactions in automotive cybersecurity can be managed effectively, focusing on secure key exchange and robust workflow automation for modern vehicle access systems.</p>
+        </section>
+
+        <section class="bento-box" id="architecture">
+            <h2>System Architecture</h2>
+            <p>The system comprises two main Spring Boot applications that communicate via HTTP, exchanging SPAKE2+ protocol messages encoded in TLV format. Each application leverages its own dedicated Temporal.io cluster for workflow management.</p>
+            <pre><code>
++---------------------+      HTTP (SPAKE2+ TLV)      +----------------------+
+|   workflow-device   |<-------------------------->|   workflow-vehicle   |
+| (localhost:3030)    | (Feign: DkcClient/SbodClient)|  (localhost:3031)    |
++---------------------+                              +----------------------+
+          |                                                      |
+          | (Temporal Client)                                    | (Temporal Client)
+          v                                                      v
++---------------------+                              +----------------------+
+| Temporal Cluster    |                              | Temporal Cluster     |
+| (Device Specific)   |                              | (Vehicle Specific)   |
+| (localhost:7234/8081)                              | (localhost:7233/8080)|
++---------------------+                              +----------------------+
+                </code></pre>
+            <h3>Key Interactions:</h3>
+            <ul>
+                <li><strong>Internal Full Cycle Test:</strong> Each application can run a complete SPAKE2+ pairing simulation internally.</li>
+                <li><strong>Inter-Service Pairing:</strong> A realistic flow where services exchange messages step-by-step. <code>workflow-vehicle</code> uses <code>SbodClient</code> and <code>workflow-device</code> uses <code>DkcClient</code>. The <code>x-requestId</code> header is vital for workflow correlation.</li>
+            </ul>
+        </section>
+
+        <section class="bento-box" id="technologies">
+            <h2>Core Technologies</h2>
+            <ul>
+                <li><strong>Java 17+</strong> with Spring Boot 3+</li>
+                <li><strong>Temporal.io:</strong> For resilient workflow orchestration.</li>
+                <li><strong>SPAKE2+ Protocol:</strong> For secure password-authenticated key exchange, implemented with BouncyCastle.</li>
+                <li><strong>TLV (Tag-Length-Value):</strong> Message encoding (using <code>com.payneteasy.tlv</code>).</li>
+                <li><strong>Feign Clients:</strong> For declarative REST API communication.</li>
+                <li><strong>Gradle:</strong> Build automation.</li>
+                <li><strong>Docker & Docker Compose:</strong> For Temporal.io environment setup.</li>
+                <li><strong>Lombok:</strong> To reduce boilerplate code.</li>
+            </ul>
+        </section>
+
+        <section class="bento-box" id="workflow-device">
+            <h2>Module: workflow-device</h2>
+            <p>Simulates a mobile device (e.g., smartphone as a digital key).</p>
+            <ul>
+                <li><strong>Port:</strong> <code>localhost:3030</code></li>
+                <li><strong>Controller:</strong> <code>DeviceOEMController</code> handles incoming requests like <code>/startFullOwnerPairingCycle</code> and <code>/receivedFromVehicle</code>.</li>
+                <li><strong>Services:</strong>
+                    <ul>
+                        <li><code>Spake2PlusDeviceService</code>: Device-side SPAKE2+ crypto logic.</li>
+                        <li><code>DkcService</code> & <code>DkcClient</code>: Sends messages to <code>workflow-vehicle</code>.</li>
+                        <li><code>ReceivedFromVehicleService</code>: Processes incoming messages and manages Temporal workflows.</li>
+                    </ul>
+                </li>
+                <li><strong>Workflows:</strong> <code>Spake2PlusDeviceWorkFlow</code> (for inter-service pairing) and <code>Spake2PlusFullWorkFlow</code> (for internal tests).</li>
+                <li><strong>Temporal UI:</strong> <code>http://localhost:8081</code></li>
+            </ul>
+        </section>
+
+        <section class="bento-box" id="workflow-vehicle">
+            <h2>Module: workflow-vehicle</h2>
+            <p>Simulates a vehicle's head unit or telematics control unit.</p>
+            <ul>
+                <li><strong>Port:</strong> <code>localhost:3031</code></li>
+                <li><strong>Controller:</strong> <code>VehicleOEMController</code> handles requests like <code>/startOwnerPairing</code> and <code>/sendToVehicle</code>.</li>
+                <li><strong>Services:</strong>
+                    <ul>
+                        <li><code>Spake2PlusVehicleService</code>: Vehicle-side SPAKE2+ crypto logic.</li>
+                        <li><code>SbodService</code> & <code>SbodClient</code>: Sends messages to <code>workflow-device</code>.</li>
+                        <li><code>SendToVehicleService</code>: Initiates pairing workflows and handles incoming messages.</li>
+                    </ul>
+                </li>
+                <li><strong>Workflows:</strong> <code>Spake2PlusVehicleWorkFlow</code> (for inter-service pairing) and <code>Spake2PlusFullWorkFlow</code> (for internal tests).</li>
+                <li><strong>Temporal UI:</strong> <code>http://localhost:8080</code></li>
+            </ul>
+        </section>
+
+        <section class="bento-box span-2" id="pairing-workflows">
+            <h2>Owner Pairing Workflows Explained</h2>
+            <h3>SPAKE2+ Protocol High-Level Steps:</h3>
+            <ol>
+                <li><strong>Password Derivation (Scrypt):</strong> Both parties derive keying material (<code>w0</code>, <code>w1</code>) from a shared password and salt.</li>
+                <li><strong>Request Phase:</strong> One party (e.g., Vehicle) initiates with a <code>SPAKE2+ Request Command</code>. The other (Device) responds with its public value <code>X</code> in a <code>SPAKE2+ Request Response</code>.</li>
+                <li><strong>Verification Phase:</strong> The initiator sends its public value <code>Y</code> and evidence <code>M1</code> in a <code>SPAKE2+ Verify Command</code>. The responder verifies <code>M1</code>, computes its evidence <code>M2</code>, and sends it back in a <code>SPAKE2+ Verify Response</code>. Mutual verification of evidence confirms a shared secret.</li>
+            </ol>
+
+            <h3>Temporal Workflows:</h3>
+            <ul>
+                <li><strong>Self-Contained Full Cycle Pairing (<code>Spake2PlusFullWorkFlow</code>):</strong> Triggered by <code>/startFullOwnerPairingCycle</code>. Runs entirely within one microservice, simulating both device and vehicle roles for internal logic testing.</li>
+                <li><strong>Inter-Service Owner Pairing (<code>Spake2PlusVehicleWorkFlow</code> & <code>Spake2PlusDeviceWorkFlow</code>):</strong> A realistic, multi-step communication between <code>workflow-vehicle</code> and <code>workflow-device</code>, orchestrated by Temporal on both sides. Each step (sending request, awaiting response, sending verification, etc.) is managed reliably.</li>
+            </ul>
+            <p>Temporal.io ensures that these complex, potentially long-running pairing sequences are durable, fault-tolerant, and traceable, which is crucial for Car Connectivity Consortium standards.</p>
+        </section>
+
+        <section class="bento-box" id="message-format">
+            <h2>Message Format: TLV</h2>
+            <p>Communication for SPAKE2+ protocol steps uses <strong>Tag-Length-Value (TLV)</strong> encoding, a common standard in secure systems and digital key specifications.</p>
+            <ul>
+                <li>Implemented using the <code>payneteasy-tlv</code> library.</li>
+                <li>Java classes in <code>com.xdman.workflow_*/model/tlv/</code> define these structures (e.g., <code>Spake2PlusRequestCommandTlv</code>).</li>
+                <li>Commands often follow APDU-like structures (e.g., <code>80 30 ...</code> for Request, <code>... 90 00</code> for success response).</li>
+            </ul>
+        </section>
+
+        <section class="bento-box" id="setup-running">
+            <h2>Setup and Running</h2>
+            <h3>Prerequisites:</h3>
+            <ul>
+                <li>Java JDK 17+</li>
+                <li>Gradle 8.x (via wrapper)</li>
+                <li>Docker & Docker Compose</li>
+            </ul>
+            <h3>Temporal Setup:</h3>
+            <p>Each module requires its own Temporal cluster. Use the provided <code>docker-compose-*.yml</code> files:</p>
+            <p>For <code>workflow-device</code> (in <code>workflow-device/</code>):<br><code>docker-compose -f docker-compose-device.yml up -d</code></p>
+            <p>For <code>workflow-vehicle</code> (in <code>workflow-vehicle/</code>):<br><code>docker-compose -f docker-compose-vehicle.yaml up -d</code></p>
+            <h3>Build & Run:</h3>
+            <p>In each module's directory (<code>workflow-device</code> and <code>workflow-vehicle</code>):</p>
+            <ol>
+                <li>Build: <code>./gradlew build</code></li>
+                <li>Run: <code>./gradlew bootRun</code> or <code>java -jar build/libs/*.jar</code></li>
+            </ol>
+        </section>
+
+        <section class="bento-box" id="testing">
+            <h2>Testing the Flow</h2>
+            <p>The <code>test.http</code> file in the project root provides HTTP requests for testing various owner pairing scenarios using an IDE plugin (like VS Code REST Client or IntelliJ HTTP Client).</p>
+            <h3>Example Test Cases:</h3>
+            <ul>
+                <li>Internal Full Cycle Pairing tests for both device and vehicle.</li>
+                <li>Vehicle-initiated Inter-Service Owner Pairing.</li>
+                <li>Simulated message receptions to trigger specific workflow signals.</li>
+            </ul>
+            <p>Monitor application logs and Temporal Web UIs for workflow execution details and status.</p>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>© 2024 Mersdev Workflow Full (Simulated Project). For demonstration of CCC Digital Key Owner Pairing Concepts.</p>
+    </footer>
+</div>
+
+<script>
+    // Minimal JavaScript
+    // Example: Smooth scroll for internal links (if you add more navigation)
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                targetElement.scrollIntoView({
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+
+    // You could add more JS for:
+    // - Toggling visibility of certain details within bento boxes
+    // - Light/Dark mode toggle
+    // - Interactive diagrams (if using a library like Mermaid.js or D3.js)
+    console.log("Mersdev Workflow Full page loaded. Explore the concepts of CCC Digital Key Owner Pairing.");
+</script>
+</body>
+</html>
