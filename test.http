@@ -1,0 +1,51 @@
+### [Device] - Full Owner Pairing Cycle
+POST http://localhost:3030/startFullOwnerPairingCycle/WX12345D
+Content-Type: application/json
+x-requestId: full-flow-123
+
+{
+  "salt": "000102030405060708090A0B0C0D0E0F",
+  "password": "0102030405060708090A0B0C0D0E0F10"
+}
+
+### [Vehicle] - Full Owner Pairing Cycle
+POST http://localhost:3031/startFullOwnerPairingCycle/WX12345V
+Content-Type: application/json
+x-requestId: full-flow-123
+
+{
+  "salt": "000102030405060708090A0B0C0D0E0F",
+  "password": "0102030405060708090A0B0C0D0E0F10"
+}
+
+### [Vehicle] - Kickstart Owner Pairing
+POST http://localhost:3031/startOwnerPairing/WX12345TEST
+Content-Type: application/json
+x-requestId: 7d89f678-test-4b51-b4d7a
+
+{
+  "salt": "000102030405060708090A0B0C0D0E0F",
+  "password": "0102030405060708090A0B0C0D0E0F10"
+}
+
+###
+POST http://localhost:3030/receivedFromVehicle/WX12345
+Content-Type: application/json
+x-requestId: 7d89f678-3fe9-4b51-b4d7a
+
+{
+  "message": "803000002F5B0201005C0201007F5020C0100102030405060708090A0B0C0D0E0F10C10400001000C2020008C3020001D602000300"
+}
+
+###
+POST http://localhost:3030/receivedFromVehicle/WX12345
+Content-Type: application/json
+x-requestId: 7d89f678-3fe9-4b51-b4d7a
+
+{
+  "message": "8032000055524104D8635EFDD44C8E2B6D44C500C3375B13B40C9F83E239162D499F5EB2850BBE6C9F024FC7C5A953F400C3DDEDF22FF554C64652DC15DAE8515C8D8B054801F24057103B1730D80E0603BC690A65806123676C00"
+}
+
+### [Vehicle] - Test SBOD Receive From Vehicle
+POST http://localhost:3031/testSbodReceiveFromVehicle/WX123445
+Content-Type: application/json
