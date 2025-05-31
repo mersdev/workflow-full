@@ -1,4 +1,4 @@
-# Mersdev Workflow Full - SPAKE2+ Owner Pairing Simulation
+# Workflow Full - SPAKE2+ Owner Pairing Simulation
 
 This project, `mersdev-workflow-full`, demonstrates a simulated owner pairing process between a device and a vehicle using the SPAKE2+ protocol, orchestrated by Temporal.io workflows. It consists of two main Spring Boot applications: `workflow-device` and `workflow-vehicle`.
 
