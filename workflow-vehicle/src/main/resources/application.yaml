@@ -1,0 +1,22 @@
+server:
+  port: 3031
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: temporal-samples
+  temporal:
+    namespace: default
+    connection:
+      target: 127.0.0.1:7233
+    workersAutoDiscovery:
+      packages: com.xdman.workflow_vehicle
+logging:
+  level:
+    com.xdman.workflow_vehicle.client.SbodClient: debug
+
+
+api:
+  sbod:
+   endpoint: "http://localhost:3030"
+#    endpoint: "http://localhost:8051/ext/vehicleoem/v1"
