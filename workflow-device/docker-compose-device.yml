@@ -1,0 +1,113 @@
+version: "3.6"
+services:
+  elasticsearch:
+    container_name: temporal-device-elasticsearch
+    environment:
+      - cluster.routing.allocation.disk.threshold_enabled=true
+      - cluster.routing.allocation.disk.watermark.low=512mb
+      - cluster.routing.allocation.disk.watermark.high=256mb
+      - cluster.routing.allocation.disk.watermark.flood_stage=128mb
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms256m -Xmx256m
+      - xpack.security.enabled=false
+    image: elasticsearch:7.17.0
+    networks:
+      - temporal-device-network
+    expose:
+      - 9200
+    volumes:
+      - temporal-device-elasticsearch-data:/usr/share/elasticsearch/data
+
+  postgresql:
+    container_name: temporal-device-postgresql
+    environment:
+      POSTGRES_PASSWORD: temporal
+      POSTGRES_USER: temporal
+      POSTGRES_DB: temporal
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --lc-collate=C --lc-ctype=C"
+    image: postgres:13
+    networks:
+      - temporal-device-network
+    ports:
+      - 5433:5432
+    volumes:
+      - temporal-device-postgresql-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U temporal -d temporal" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  temporal:
+    container_name: temporal-device
+    depends_on:
+      postgresql:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_started
+    environment:
+      - DB=postgres12
+      - DB_PORT=5432
+      - POSTGRES_USER=temporal
+      - POSTGRES_PWD=temporal
+      - POSTGRES_SEEDS=postgresql
+      - DYNAMIC_CONFIG_FILE_PATH=config/dynamicconfig/development-sql.yaml
+      - ENABLE_ES=true
+      - ES_SEEDS=elasticsearch
+      - ES_VERSION=v7
+      - TEMPORAL_ADDRESS=temporal:7233
+      - TEMPORAL_CLI_ADDRESS=temporal:7233
+    image: temporalio/auto-setup:1.22.0
+    networks:
+      - temporal-device-network
+    ports:
+      - 7234:7233
+    configs:
+      - source: temporal-device-config
+        target: /etc/temporal/config/dynamicconfig/development-sql.yaml
+
+  temporal-admin-tools:
+    container_name: temporal-device-admin-tools
+    depends_on:
+      - temporal
+    environment:
+      - TEMPORAL_ADDRESS=temporal:7233
+      - TEMPORAL_CLI_ADDRESS=temporal:7233
+    image: temporalio/admin-tools:1.22.0
+    networks:
+      - temporal-device-network
+    stdin_open: true
+    tty: true
+
+  temporal-ui:
+    container_name: temporal-device-ui
+    depends_on:
+      - temporal
+    environment:
+      - TEMPORAL_ADDRESS=temporal:7233
+      - TEMPORAL_CORS_ORIGINS=http://localhost:3000
+    image: temporalio/ui:2.21.0
+    networks:
+      - temporal-device-network
+    ports:
+      - 8081:8080
+
+networks:
+  temporal-device-network:
+    driver: bridge
+    name: temporal-device-network
+
+volumes:
+  temporal-device-elasticsearch-data:
+  temporal-device-postgresql-data:
+
+configs:
+  temporal-device-config:
+    content: |
+      limit.maxIDLength:
+        - value: 255
+          constraints: {}
+      system.forceSearchAttributesCacheRefreshOnRead:
+        - value: true # Dev setup only. Please don't turn this on in production.
+          constraints: {}

@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mersdev Workflow: CCC Digital Key Owner Pairing | SPAKE2+ & Temporal.io</title>
+    <meta name="description" content="Deep dive into the Mersdev Workflow project: A Car Connectivity Consortium (CCC) Digital Key owner pairing simulation using SPAKE2+ and Temporal.io. Features a Mercedes-Benz black-themed design and clear, animated workflow diagrams.">
+    <meta name="keywords" content="Mercedes-Benz Black Theme, Car Connectivity Consortium, CCC, Digital Key, Owner Pairing, SPAKE2+, Temporal.io, Workflow Orchestration, Secure Vehicle Access, Automotive Cybersecurity, Microservices, TLV Encoding, Mersdev, Animated Workflow">
+    <meta name="author" content="Mersdev (Simulated Project)">
+    <link rel="canonical" href="YOUR_CANONICAL_URL_HERE"> <!-- Replace with your actual URL when deployed -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+
+    <style>
+        :root {
+            /* Mercedes-Benz Inspired Black Theme */
+            --bg-color: #F5F5F5; /* Very Light Silver/Off-White Background */
+            --card-bg-color: #FFFFFF;
+            --primary-color: #1A1A1A; /* Rich Black for primary elements/text */
+            --secondary-text-color: #555555; /* Dark Grey for secondary text */
+            --accent-color-blue: #0078D6; /* Mercedes-Benz Blue (approx.) */
+            --accent-color-silver: #A0A0A0; /* Silver for accents */
+            --border-color: #DCDCDC; /* Light Grey Border */
+            --shadow-color: rgba(0, 0, 0, 0.08);
+            --font-family: 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            --border-radius: 12px; /* Slightly larger radius */
+            --spacing-unit: 1rem;
+            --premium-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            color: var(--secondary-text-color); /* Default text color */
+            line-height: 1.7;
+            padding: calc(var(--spacing-unit) * 1.5);
+            font-weight: 300;
+        }
+
+        .container {
+            max-width: 1350px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: calc(var(--spacing-unit) * 3.5);
+        }
+
+        header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: calc(var(--spacing-unit) * 0.75);
+        }
+        header h1 .accent-blue {
+            color: var(--accent-color-blue);
+        }
+        header h1 .accent-silver {
+            color: var(--accent-color-silver);
+            font-weight: 500;
+        }
+
+
+        header p.subtitle {
+            font-size: 1.25rem;
+            color: var(--secondary-text-color);
+            max-width: 800px;
+            margin: 0 auto;
+            font-weight: 300;
+        }
+
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+            gap: calc(var(--spacing-unit) * 1.8);
+        }
+
+        .bento-box {
+            background-color: var(--card-bg-color);
+            padding: calc(var(--spacing-unit) * 2);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--premium-shadow);
+            transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .bento-box:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 18px 45px rgba(0, 0, 0, 0.08);
+        }
+
+        .bento-box h2 {
+            font-size: 1.7rem;
+            font-weight: 500; /* Medium weight for headings */
+            color: var(--primary-color); /* Black for headings */
+            margin-bottom: calc(var(--spacing-unit) * 1.2);
+            padding-bottom: calc(var(--spacing-unit) * 0.6);
+            border-bottom: 3px solid var(--accent-color-blue);
+            display: inline-block;
+        }
+        .bento-box h3 {
+            font-size: 1.3rem;
+            color: var(--primary-color);
+            margin-top: calc(var(--spacing-unit) * 1.2);
+            margin-bottom: calc(var(--spacing-unit) * 0.7);
+            font-weight: 500;
+        }
+
+        .bento-box p, .bento-box ul {
+            margin-bottom: var(--spacing-unit);
+            font-size: 1rem;
+        }
+
+        .bento-box ul {
+            list-style-type: disc; /* Default disc */
+            list-style-position: outside;
+            padding-left: calc(var(--spacing-unit) * 1.5);
+        }
+        .bento-box li {
+            margin-bottom: calc(var(--spacing-unit) * 0.4);
+        }
+
+        .bento-box code {
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+            background-color: #ebebeb;
+            padding: 0.25em 0.5em;
+            border-radius: 6px;
+            font-size: 0.9em;
+            color: var(--accent-color-blue);
+            border: 1px solid #ddd;
+        }
+
+        .bento-box pre {
+            background-color: var(--primary-color); /* Black background for code blocks */
+            color: #C5C8C6; /* Light grey for code text - Tomorrow Night Bright theme */
+            padding: calc(var(--spacing-unit) * 1.2);
+            border-radius: var(--border-radius);
+            overflow-x: auto;
+            font-size: 0.88em;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            flex-grow: 1;
+            border: 1px solid #444;
+        }
+        .bento-box pre code {
+            background-color: transparent;
+            color: inherit; padding: 0; font-size: inherit; border: none;
+        }
+
+        .bento-box.span-2 { grid-column: span 2; }
+        .bento-box.span-3 { grid-column: span 3; }
+
+        @media (max-width: 1024px) { .bento-box.span-3 { grid-column: span 2; } }
+        @media (max-width: 768px) {
+            .bento-box.span-2, .bento-box.span-3 { grid-column: span 1; }
+            header h1 { font-size: 2.4rem; }
+            header p.subtitle { font-size: 1.1rem; }
+        }
+
+        /* Architecture Diagram SVG Styles */
+        .architecture-diagram-svg {
+            width: 100%; height: auto; min-height: 380px;
+            border-radius: var(--border-radius); margin: var(--spacing-unit) 0; display: block;
+            background-color: #ffffff; padding: var(--spacing-unit); border: 1px solid var(--border-color);
+        }
+        .architecture-diagram-svg .box {
+            stroke: var(--accent-color-blue); stroke-width: 2; fill: #F8F9FA; rx: 6; ry: 6;
+        }
+        .architecture-diagram-svg .box-temporal {
+            stroke: var(--accent-color-silver); fill: #f0f0f0; stroke-width: 1.5;
+        }
+        .architecture-diagram-svg text {
+            font-family: var(--font-family); font-size: 11px; fill: var(--primary-color);
+        }
+        .architecture-diagram-svg .label { font-weight: 500; font-size: 12px; }
+        .architecture-diagram-svg .arrow {
+            stroke: var(--primary-color); stroke-width: 1.8; fill: var(--primary-color);
+        }
+        .architecture-diagram-svg .arrow-dashed { stroke-dasharray: 5, 3; }
+
+        /* Enhanced Workflow Animation Styles */
+        .workflow-animation-container {
+            display: flex; flex-direction: column; align-items: center;
+            padding: calc(var(--spacing-unit) * 1.5); min-height: 450px; position: relative;
+            background: linear-gradient(135deg, #FDFDFD, #F0F2F5); /* Subtle gradient background */
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        .flow-actors {
+            display: flex; justify-content: space-between; /* Space between for clearer path */
+            width: 100%; max-width: 750px; margin-bottom: calc(var(--spacing-unit) * 2.5);
+        }
+
+        .flow-actor {
+            background-color: var(--card-bg-color);
+            border: 2px solid var(--accent-color-silver);
+            padding: var(--spacing-unit) calc(var(--spacing-unit) * 1.5);
+            border-radius: var(--border-radius); text-align: center;
+            width: 200px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: border-color 0.3s ease, transform 0.3s ease;
+        }
+        .flow-actor h4 {
+            font-size: 1.2rem; color: var(--primary-color); margin-bottom: calc(var(--spacing-unit) * 0.5); font-weight: 500;
+        }
+        .flow-actor.active { /* Highlight for active actor */
+            border-color: var(--accent-color-blue);
+            transform: scale(1.03);
+            box-shadow: 0 0 15px var(--accent-color-blue);
+        }
+
+        .message-paths { position: relative; width: 100%; max-width: 700px; height: 250px; }
+
+        .message {
+            position: absolute; background-color: var(--accent-color-blue); color: white;
+            padding: 8px 15px; border-radius: 25px; font-size: 0.85rem; white-space: nowrap;
+            opacity: 0; transform: translateY(20px) scale(0.7);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            letter-spacing: 0.5px;
+            z-index: 10;
+        }
+        /* Define distinct animation paths and timings */
+        /* Travel distance: approx 65-70% of .message-paths width */
+        .message.m-request { animation: flow-move 2s ease-in-out forwards, actor-pulse-vehicle 0.5s ease forwards; animation-delay: 0.5s; left: 5%; top: 10px; }
+        .message.m-response { animation: flow-move 2s ease-in-out forwards, actor-pulse-device 0.5s ease forwards; animation-delay: 3.5s; right: 5%; top: 70px; background-color: #23A455; } /* Success Green */
+        .message.m-verify { animation: flow-move 2s ease-in-out forwards, actor-pulse-vehicle 0.5s ease forwards; animation-delay: 6.5s; left: 5%; top: 130px; }
+        .message.m-verify-resp { animation: flow-move 2s ease-in-out forwards, actor-pulse-device 0.5s ease forwards; animation-delay: 9.5s; right: 5%; top: 190px; background-color: #23A455; }
+
+        @keyframes flow-move {
+            0% { opacity: 0; transform: translateY(20px) scale(0.7); }
+            25% { opacity: 1; transform: translateY(0) scale(1); } /* Appear and rise */
+            75% { opacity: 1; transform: translateY(0) scale(1); } /* Hold */
+            100% { opacity: 0; transform: translateY(-20px) scale(0.7); } /* Rise and disappear */
+        }
+
+        /* Actor pulse animations to indicate sending/receiving */
+        /* Apply these to the .flow-actor elements using JS or more complex CSS if needed, or bake into message animation delays */
+        @keyframes actor-pulse-vehicle { /* Triggers on vehicle when it's "active" */
+            from { transform: scale(1.0); border-color: var(--accent-color-silver); }
+            to { transform: scale(1.03); border-color: var(--accent-color-blue); box-shadow: 0 0 15px var(--accent-color-blue);}
+        }
+        @keyframes actor-pulse-device {
+            from { transform: scale(1.0); border-color: var(--accent-color-silver); }
+            to { transform: scale(1.03); border-color: var(--accent-color-blue); box-shadow: 0 0 15px var(--accent-color-blue); }
+        }
+
+        /* JS will toggle .active on actors. CSS to handle the actual travel based on message class */
+        /* If message has .m-request or .m-verify, it moves right. If .m-response or .m-verify-resp, it moves left */
+        .message.m-request, .message.m-verify { animation-name: flow-move-right, actor-pulse-vehicle-send; }
+        .message.m-response, .message.m-verify-resp { animation-name: flow-move-left, actor-pulse-device-send; }
+
+
+        @keyframes flow-move-right {
+            0% { opacity: 0; transform: translateX(0) translateY(10px) scale(0.7); left: 5%; }
+            20% { opacity: 1; transform: translateX(0) translateY(0) scale(1); left: 5%; }
+            80% { opacity: 1; transform: translateX(calc(100% + 100px)) translateY(0) scale(1); left: 5%; } /* Move across to ~70% of paths width */
+            100% { opacity: 0; transform: translateX(calc(100% + 100px)) translateY(-10px) scale(0.7); left: 5%; }
+        }
+
+        @keyframes flow-move-left {
+            0% { opacity: 0; transform: translateX(0) translateY(10px) scale(0.7); right: 5%; }
+            20% { opacity: 1; transform: translateX(0) translateY(0) scale(1); right: 5%; }
+            80% { opacity: 1; transform: translateX(calc(-100% - 100px)) translateY(0) scale(1); right: 5%; }
+            100% { opacity: 0; transform: translateX(calc(-100% - 100px)) translateY(-10px) scale(0.7); right: 5%; }
+        }
+        /* The translateX calc(100% + 100px) effectively moves it across the .message-paths container. 100px is an arbitrary offset. */
+        /* Actor pulse needs to be timed with JS for accuracy or more complex CSS */
+
+
+        .flow-description {
+            margin-top: calc(var(--spacing-unit) * 2); font-size: 0.95rem; color: var(--secondary-text-color);
+            text-align: center; max-width: 600px;
+        }
+        .flow-description p { margin-bottom: 8px;}
+        .flow-description strong { color: var(--primary-color); font-weight: 500; }
+
+
+        footer {
+            text-align: center; margin-top: calc(var(--spacing-unit) * 4);
+            padding: calc(var(--spacing-unit) * 2) var(--spacing-unit);
+            color: var(--secondary-text-color); font-size: 0.9rem;
+            border-top: 1px solid var(--border-color); background-color: var(--card-bg-color);
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>Mersdev <span class="accent-silver">Workflow</span> <span class="accent-blue">Full</span></h1>
+        <p class="subtitle">Simulating Car Connectivity Consortium (CCC) Digital Key Owner Pairing using SPAKE2+ and Temporal.io</p>
+    </header>
+
+    <main class="bento-grid">
+        <section class="bento-box span-2" id="overview">
+            <h2>Project Overview</h2>
+            <p>The <code>mersdev-workflow-full</code> project provides a robust simulation of the <strong>Car Connectivity Consortium (CCC) Digital Key owner pairing</strong> process. It meticulously demonstrates the secure establishment of a trusted relationship between a device (e.g., a smartphone) and a vehicle, leveraging the <strong>SPAKE2+ (Secure Password Authenticated Key Exchange)</strong> protocol. The entire complex, stateful interaction is orchestrated using <strong>Temporal.io</strong> workflows, ensuring reliability, fault tolerance, and clear visibility into the pairing sequence.</p>
+            <p>This simulation is built around two core microservices:</p>
+            <ul>
+                <li><strong>workflow-device:</strong> Represents the end-user's device acting as a digital key.</li>
+                <li><strong>workflow-vehicle:</strong> Represents the vehicle's sophisticated systems participating in the pairing.</li>
+            </ul>
+            <p>The project serves as an excellent example of managing intricate cryptographic handshakes and workflow automation in the context of modern automotive cybersecurity and advanced vehicle access systems.</p>
+        </section>
+
+        <section class="bento-box span-3" id="animated-workflow">
+            <h2>Inter-Service Pairing Flow (Animated)</h2>
+            <div class="workflow-animation-container">
+                <div class="flow-actors">
+                    <div class="flow-actor" id="actor-vehicle">
+                        <h4>Workflow Vehicle</h4>
+                        <p>(Initiator/Responder)</p>
+                    </div>
+                    <div class="flow-actor" id="actor-device">
+                        <h4>Workflow Device</h4>
+                        <p>(Responder/Initiator)</p>
+                    </div>
+                </div>
+                <div class="message-paths">
+                    <div class="message m-request" id="msg1">SPAKE2+ Request →</div>
+                    <div class="message m-response" id="msg2">← SPAKE2+ Response</div>
+                    <div class="message m-verify" id="msg3">SPAKE2+ Verify →</div>
+                    <div class="message m-verify-resp" id="msg4">← Verify Response</div>
+                </div>
+                <div class="flow-description">
+                    <p><strong>1. Request:</strong> Vehicle initiates with <code>SPAKE2+ Request Command</code>.</p>
+                    <p><strong>2. Response:</strong> Device processes, sends <code>SPAKE2+ Request Response</code>.</p>
+                    <p><strong>3. Verify:</strong> Vehicle validates, sends <code>SPAKE2+ Verify Command</code>.</p>
+                    <p><strong>4. Confirm:</strong> Device validates, confirms with <code>SPAKE2+ Verify Response</code>.</p>
+                    <p><strong>Outcome:</strong> Secure pairing achieved, shared secrets established for Digital Key operations.</p>
+                </div>
+            </div>
+        </section>
+
+
+        <section class="bento-box span-2" id="architecture">
+            <h2>System Architecture</h2>
+            <p>The system features two Spring Boot microservices for device and vehicle simulations. They communicate via HTTP, exchanging TLV-encoded SPAKE2+ messages. Each service utilizes a dedicated Temporal.io cluster for orchestrating the complex pairing workflows, ensuring each step is reliably executed.</p>
+            <svg viewBox="0 0 400 300" class="architecture-diagram-svg" aria-labelledby="architectureTitle" role="img">
+                <title id="architectureTitle">Mersdev Workflow System Architecture Diagram</title>
+                <!-- Device Side -->
+                <rect x="20" y="30" width="160" height="90" class="box"/>
+                <text x="40" y="50" class="label">workflow-device</text>
+                <text x="55" y="68">(localhost:3030)</text>
+                <text x="45" y="86" font-size="10px">Simulates Mobile Device</text>
+                <text x="60" y="104" fill="#0078D6">DkcClient</text>
+
+                <rect x="20" y="200" width="160" height="70" class="box-temporal"/>
+                <text x="35" y="220" class="label">Temporal Cluster</text>
+                <text x="65" y="238">(Device)</text>
+                <text x="45" y="256" font-size="10px">localhost:7234/8081</text>
+
+                <!-- Vehicle Side -->
+                <rect x="220" y="30" width="160" height="90" class="box"/>
+                <text x="235" y="50" class="label">workflow-vehicle</text>
+                <text x="250" y="68">(localhost:3031)</text>
+                <text x="230" y="86" font-size="10px">Simulates Vehicle System</text>
+                <text x="255" y="104" fill="#0078D6">SbodClient</text>
+
+                <rect x="220" y="200" width="160" height="70" class="box-temporal"/>
+                <text x="235" y="220" class="label">Temporal Cluster</text>
+                <text x="265" y="238">(Vehicle)</text>
+                <text x="245" y="256" font-size="10px">localhost:7233/8080</text>
+
+                <!-- Connections -->
+                <line x1="100" y1="120" x2="100" y2="200" class="arrow arrow-dashed"/>
+                <polygon points="97,195 103,195 100,200" class="arrow"/>
+                <text x="60" y="160" font-size="10px">Temporal Client</text>
+
+                <line x1="300" y1="120" x2="300" y2="200" class="arrow arrow-dashed"/>
+                <polygon points="297,195 303,195 300,200" class="arrow"/>
+                <text x="260" y="160" font-size="10px">Temporal Client</text>
+
+                <!-- HTTP Traffic with improved arrows -->
+                <path d="M 180 60 Q 200 45, 220 60" stroke-width="1.8" stroke="var(--primary-color)" fill="none" class="arrow"/>
+                <polygon points="217,56 223,60 217,64" fill="var(--primary-color)" /> <!-- Arrow head pointing right -->
+                <text x="182" y="40" font-size="9.5px">HTTP/TLV</text>
+
+                <path d="M 220 80 Q 200 95, 180 80" stroke-width="1.8" stroke="var(--primary-color)" fill="none" class="arrow"/>
+                <polygon points="183,84 177,80 183,76" fill="var(--primary-color)" /> <!-- Arrow head pointing left -->
+            </svg>
+            <h3>Key Interactions:</h3>
+            <ul>
+                <li><strong>Internal Full Cycle Test:</strong> Each app can run a complete SPAKE2+ simulation independently.</li>
+                <li><strong>Inter-Service Pairing:</strong> Realistic, distributed flow coordinated by Temporal, using <code>x-requestId</code> for end-to-end tracebility.</li>
+            </ul>
+        </section>
+
+        <section class="bento-box" id="technologies">
+            <h2>Core Technologies</h2>
+            <ul>
+                <li><strong>Java 17+</strong> with Spring Boot 3+</li>
+                <li><strong>Temporal.io</strong> for resilient workflow orchestration.</li>
+                <li><strong>SPAKE2+ Protocol</strong> for PAKE (BouncyCastle).</li>
+                <li><strong>TLV Encoding</strong> for messages (<code>com.payneteasy.tlv</code>).</li>
+                <li>Feign Clients for declarative REST communication.</li>
+                <li>Gradle for build automation.</li>
+                <li>Docker & Docker Compose for environments.</li>
+            </ul>
+        </section>
+
+        <section class="bento-box" id="workflow-device-module">
+            <h2>Module: workflow-device</h2>
+            <p>Simulates the mobile device (digital key). Runs on <code>localhost:3030</code>. Implements the device's role in the SPAKE2+ handshake, communicates with <code>workflow-vehicle</code> via its <code>DkcClient</code> (Feign). The dedicated Temporal UI is accessible at <code>http://localhost:8081</code>.</p>
+        </section>
+
+        <section class="bento-box" id="workflow-vehicle-module">
+            <h2>Module: workflow-vehicle</h2>
+            <p>Simulates the vehicle's embedded system. Runs on <code>localhost:3031</code>. Implements the vehicle's role, communicates with <code>workflow-device</code> via its <code>SbodClient</code> (Feign). Its dedicated Temporal UI is at <code>http://localhost:8080</code>.</p>
+        </section>
+
+        <section class="bento-box span-2" id="pairing-workflows-explained">
+            <h2>Owner Pairing Workflows Deep Dive</h2>
+            <h3>SPAKE2+ Protocol Highlights:</h3>
+            <ol>
+                <li><strong>Password Derivation (Scrypt):</strong> Both device and vehicle securely derive keying material (<code>w0</code>, <code>w1</code>) from a pre-shared password and a unique salt.</li>
+                <li><strong>Request Phase:</strong> One party (e.g., Vehicle) initiates by sending a <code>SPAKE2+ Request Command</code>. The other party (e.g., Device) processes this, generates its public value <code>X</code>, and sends back a <code>SPAKE2+ Request Response</code>.</li>
+                <li><strong>Verification Phase:</strong> The initiator receives <code>X</code>, generates its public value <code>Y</code>, computes a shared secret, derives evidence keys, and sends a <code>SPAKE2+ Verify Command</code> containing <code>Y</code> and its evidence <code>M1</code>. The responder then verifies <code>M1</code>, computes its own evidence <code>M2</code>, and sends a <code>SPAKE2+ Verify Response</code>. Mutual verification confirms a shared secret.</li>
+            </ol>
+            <h3>Temporal Workflow Orchestration:</h3>
+            <p>Temporal.io workflows (<code>Spake2PlusFullWorkFlow</code> for internal tests, and <code>Spake2PlusVehicleWorkFlow</code> & <code>Spake2PlusDeviceWorkFlow</code> for inter-service pairing) manage this sequence. They ensure each step is executed reliably, handle retries, and provide visibility, which is paramount for meeting Car Connectivity Consortium (CCC) standards for digital key systems.</p>
+        </section>
+
+        <section class="bento-box" id="message-format-tlv">
+            <h2>Message Format: TLV</h2>
+            <p>All SPAKE2+ protocol messages exchanged between the device and vehicle are encoded using the <strong>Tag-Length-Value (TLV)</strong> format. This is a standard practice in secure communication and digital key specifications, allowing for flexible and extensible message structures.</p>
+            <ul>
+                <li>The <code>com.payneteasy.tlv</code> library is utilized for encoding Java objects to TLV hex strings and decoding them back.</li>
+                <li>Commands often follow APDU-like structures, for example: <code>8030...</code> for a SPAKE2+ Request and responses typically end with <code>9000</code> for success.</li>
+            </ul>
+        </section>
+
+        <section class="bento-box" id="setup-running-guide">
+            <h2>Setup and Execution</h2>
+            <h3>Prerequisites:</h3>
+            <ul>
+                <li>Java JDK 17 or higher</li>
+                <li>Gradle 8.x (via wrapper)</li>
+                <li>Docker and Docker Compose</li>
+            </ul>
+            <h3>Temporal Environment:</h3>
+            <p>Each module (<code>workflow-device</code>, <code>workflow-vehicle</code>) requires its own Temporal cluster. Start them using their respective <code>docker-compose-*.yml</code> files from within their directories (e.g., <code>docker-compose -f docker-compose-device.yml up -d</code>).</p>
+            <h3>Application Build & Run:</h3>
+            <p>Navigate to each module's directory:</p>
+            <ol>
+                <li>Build the application: <code>./gradlew build</code></li>
+                <li>Run the application: <code>./gradlew bootRun</code> (or use the generated JAR).</li>
+            </ol>
+        </section>
+
+        <section class="bento-box" id="testing-info">
+            <h2>Testing & Verification</h2>
+            <p>The <code>test.http</code> file, located in the project root, contains a suite of HTTP requests designed for testing the various owner pairing scenarios. Use an IDE with an HTTP client plugin (e.g., IntelliJ IDEA's built-in client or VS Code's REST Client extension) to execute these requests.</p>
+            <h3>Key Test Scenarios:</h3>
+            <ul>
+                <li>Internal Full Cycle Pairing tests (device and vehicle initiated).</li>
+                <li>Complete Vehicle-initiated Inter-Service Owner Pairing.</li>
+                <li>Simulated message receptions to directly trigger specific workflow signals if needed for granular testing.</li>
+            </ul>
+            <p>During testing, closely monitor the application console logs for detailed output from services, workflows, and activities. Additionally, utilize the Temporal Web UIs (Device: <code>http://localhost:8081</code>, Vehicle: <code>http://localhost:8080</code>) to inspect workflow executions, view their history, inputs, and outputs for comprehensive verification.</p>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>© 2024 Mersdev Workflow Full (Simulated Project). Illustrating CCC Digital Key Owner Pairing Concepts with a Mercedes-Benz Inspired Design Theme.</p>
+    </footer>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log("Mersdev Workflow Full page loaded. Explore CCC Digital Key Owner Pairing concepts.");
+
+        const actorVehicle = document.getElementById('actor-vehicle');
+        const actorDevice = document.getElementById('actor-device');
+        const messages = [
+            document.getElementById('msg1'), // request
+            document.getElementById('msg2'), // response
+            document.getElementById('msg3'), // verify
+            document.getElementById('msg4')  // verify-resp
+        ];
+
+        let currentStep = 0;
+        const totalSteps = messages.length;
+
+        function resetActorStyles() {
+            actorVehicle.classList.remove('active');
+            actorDevice.classList.remove('active');
+        }
+
+        function runAnimationStep(step) {
+            if (step >= totalSteps) {
+                resetActorStyles();
+                console.log("Animation sequence complete.");
+                // Optionally, re-enable click to restart after a delay or on a button
+                setTimeout(() => { // Small delay before allowing restart
+                    currentStep = 0; // Reset for next click
+                }, 1000);
+                return;
+            }
+
+            resetActorStyles();
+            const msgElement = messages[step];
+            const isRequestType = msgElement.classList.contains('m-request') || msgElement.classList.contains('m-verify');
+
+            // Determine which actor is active
+            if (isRequestType) { // Vehicle sends request or verify
+                actorVehicle.classList.add('active');
+            } else { // Device sends response or verify-resp
+                actorDevice.classList.add('active');
+            }
+
+            // Clone the node to restart its animation
+            const newMsgElement = msgElement.cloneNode(true);
+            msgElement.parentNode.replaceChild(newMsgElement, msgElement);
+            messages[step] = newMsgElement; // Update reference
+
+            // Apply correct animation based on direction
+            if (isRequestType) {
+                newMsgElement.style.animation = `flow-move-right 2s ease-in-out ${0.1 * step}s forwards`;
+            } else {
+                newMsgElement.style.animation = `flow-move-left 2s ease-in-out ${0.1 * step}s forwards`;
+            }
+
+            // Listen for animation end to proceed to next step and switch active actor
+            newMsgElement.onanimationend = () => {
+                resetActorStyles(); // Deactivate current sender
+                // Activate receiver (simplified: just the other actor)
+                if (!isRequestType) {
+                    if(actorVehicle) actorVehicle.classList.add('active'); // Vehicle receives
+                } else {
+                    if(actorDevice) actorDevice.classList.add('active'); // Device receives
+                }
+                // Wait a bit before the next message or ending
+                setTimeout(() => {
+                    runAnimationStep(step + 1);
+                }, 500); // Delay before next message appears
+            };
+        }
+
+        const animationContainer = document.getElementById('animated-workflow');
+        if(animationContainer) {
+            animationContainer.addEventListener('click', () => {
+                if (currentStep === 0 || currentStep >= totalSteps) { // Only restart if at beginning or end
+                    console.log("Restarting animation sequence.");
+                    currentStep = 0;
+                    // Clear any existing message elements to avoid duplicates if rapidly clicked
+                    messages.forEach((msg, index) => {
+                        const originalId = msg.id;
+                        const freshMsg = document.createElement('div');
+                        freshMsg.id = originalId;
+                        freshMsg.className = msg.className; // Copy all classes
+                        freshMsg.textContent = msg.textContent;
+                        // Replace in DOM and in array
+                        const parent = document.querySelector('.message-paths');
+                        const oldMsg = document.getElementById(originalId);
+                        if(oldMsg && parent) parent.replaceChild(freshMsg, oldMsg);
+                        messages[index] = freshMsg;
+                    });
+                    runAnimationStep(currentStep);
+                }
+            });
+        }
+        // Initial call to start, or could be triggered by a button
+        // runAnimationStep(currentStep); // Uncomment to auto-start
+        // For now, let's make it start on first click.
+        animationContainer.querySelector('.flow-description p').insertAdjacentText('beforeend', ' (Click animation to start/restart)');
+
+
+    });
+</script>
+</body>
+</html>

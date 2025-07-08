@@ -1,0 +1,28 @@
+server:
+  port: 0  # Random port for tests
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: temporal-samples-test
+  temporal:
+    namespace: default
+    connection:
+      target: localhost:7234
+    worker:
+      task-queue: Spake2PlusTaskQueue
+
+logging:
+  level:
+    com.xdman.workflow_device: DEBUG
+    io.temporal: WARN
+    org.springframework.web: DEBUG
+    feign: DEBUG
+
+# Test configuration for external services
+test:
+  external-services:
+    vehicle-service:
+      url: http://localhost:3031
+      enabled: false  # Disable for unit tests, enable for integration tests

@@ -1,0 +1,16 @@
+server:
+  port: 3030
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: temporal-samples
+  temporal:
+    namespace: default
+    connection:
+      target: 127.0.0.1:7234
+    workersAutoDiscovery:
+      packages: com.xdman.workflow_device
+logging:
+  level:
+    com.xdman.workflow_device.client.DkcClient: debug

@@ -1,0 +1,10 @@
+package com.xdman.workflow_vehicle.model;
+
+
+import com.xdman.workflow_vehicle.model.tlv.Spake2PlusRequestResponseTlv;
+
+public record Spake2PlusResponseWrapper(
+  Spake2PlusRequestResponseTlv response,
+  Spake2PlusDeviceData config
+) {
+}
