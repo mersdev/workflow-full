@@ -7,6 +7,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 @FeignClient(
   name = "DkcClient",
@@ -20,6 +21,7 @@ public interface DkcClient {
   @PostMapping(path = "/sendToVehicle/{vin}")
   SendToVehicleResponse sendMessageToVehicle(
 	@PathVariable("vin") String vin,
-	@RequestBody SendToVehicleRequest messagePayload
+	@RequestBody SendToVehicleRequest messagePayload,
+	@RequestHeader("x-requestId") String requestId
   );
 }

@@ -14,8 +14,13 @@ public class SbodService {
 	this.sbodClient = sbodClient;
   }
 
-  public ReceivedFromVehicleResponse receiveFromVehicle(String vin, String messagePayload) {
+  public ReceivedFromVehicleResponse receiveFromVehicle(String vin, String messagePayload, String requestId) {
 	ReceivedFromVehicleRequest request = new ReceivedFromVehicleRequest(messagePayload);
-	return sbodClient.receivedFromVehicle(vin, request);
+	return sbodClient.receivedFromVehicle(vin, request, requestId);
+  }
+
+  // Backward compatibility method - generates new UUID if no requestId provided
+  public ReceivedFromVehicleResponse receiveFromVehicle(String vin, String messagePayload) {
+	return receiveFromVehicle(vin, messagePayload, java.util.UUID.randomUUID().toString());
   }
 }

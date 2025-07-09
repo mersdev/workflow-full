@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 public class Spake2PlusDeviceWorkFlowImpl implements Spake2PlusDeviceWorkFlow {
   private DeviceMessagePayload message;
   private Spake2PlusDeviceData config;
+  private String requestId;
 
   private final Spake2PlusDeviceActivity deviceActivity = Workflow.newActivityStub(
 	Spake2PlusDeviceActivity.class,
@@ -34,7 +35,8 @@ public class Spake2PlusDeviceWorkFlowImpl implements Spake2PlusDeviceWorkFlow {
   );
 
   @Override
-  public void startDeviceOwnerPairing() {
+  public void startDeviceOwnerPairing(String requestId) {
+	this.requestId = requestId;
 	String status = "";
 
 	Workflow.await(() -> message != null &&
@@ -44,7 +46,7 @@ public class Spake2PlusDeviceWorkFlowImpl implements Spake2PlusDeviceWorkFlow {
 	SelectCommandTlv selectCommandTlv = deviceActivity.receiveSelectCommandSuccessfully(message.message());
 	ResponseToSelectCommandTlv responseToSelectCommandTlv = deviceActivity.processSelectCommandSuccessfully(selectCommandTlv);
 	try {
-	  status = deviceActivity.sendSelectResponseSuccessfully(message.vin(), responseToSelectCommandTlv.encode());
+	  status = deviceActivity.sendSelectResponseSuccessfully(message.vin(), responseToSelectCommandTlv.encode(), requestId);
 	  log.info("Sending Select Response {}", status);
 	} catch (Exception e) {
 	  log.error("Failed to publish command message to DKC", e);
@@ -57,7 +59,7 @@ public class Spake2PlusDeviceWorkFlowImpl implements Spake2PlusDeviceWorkFlow {
 
 	Spake2PlusResponseWrapper response = deviceActivity.processSpake2PlusRequestSuccessfully(request, "0102030405060708090A0B0C0D0E0F10");
 	try {
-	  status = deviceActivity.sendSpake2PlusResponseSuccessfully(message.vin(), response.response().encode());
+	  status = deviceActivity.sendSpake2PlusResponseSuccessfully(message.vin(), response.response().encode(), requestId);
 	  log.info("Sending Response {}", status);
 	} catch (Exception e) {
 	  log.error("Failed to publish command message to DKC", e);
@@ -68,7 +70,7 @@ public class Spake2PlusDeviceWorkFlowImpl implements Spake2PlusDeviceWorkFlow {
 	Spake2PlusVerifyCommandTlv verifyCommandTlv = deviceActivity.receiveSpake2PlusVerifyCommandSuccessfully(message.message());
 	Spake2PlusVerifyResponseTlv verifyResponseTlv = deviceActivity.processSpake2PlusVerifyCommandSuccessfully(verifyCommandTlv, response.config());
 	try {
-	  status = deviceActivity.sendSpake2PlusVerifyResponseSuccessfully(message.vin(), verifyResponseTlv.encode());
+	  status = deviceActivity.sendSpake2PlusVerifyResponseSuccessfully(message.vin(), verifyResponseTlv.encode(), requestId);
 	  log.info("Sending Verify Response {}", status);
 	} catch (Exception e) {
 	  log.error("Failed to publish command message to DKC", e);

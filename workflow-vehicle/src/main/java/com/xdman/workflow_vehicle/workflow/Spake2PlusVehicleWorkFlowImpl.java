@@ -27,9 +27,9 @@ public class Spake2PlusVehicleWorkFlowImpl implements Spake2PlusVehicleWorkFlow 
   );
 
   @Override
-  public String startVehicleWorkflow(String vin, String password, String salt) {
+  public String startVehicleWorkflow(String vin, String password, String salt, String requestId) {
 	String selectCommandTlv = vehicleActivity.createSelectCommandSuccessfully(vin);
-	String status = vehicleActivity.sendSelectCommandSuccessfully(vin, selectCommandTlv);
+	String status = vehicleActivity.sendSelectCommandSuccessfully(vin, selectCommandTlv, requestId);
 	log.info("Send Select Command to Device: {}", status);
 
 	Workflow.await(()-> !message.isEmpty());
@@ -38,7 +38,7 @@ public class Spake2PlusVehicleWorkFlowImpl implements Spake2PlusVehicleWorkFlow 
 	message = "";
 	Spake2PlusRequestWrapper requestWrapper = vehicleActivity.createSpake2PlusRequestSuccessfully(password, salt);
 	log.info("SPAKE2+ Request Command: {}", requestWrapper.request().encode());
-	status = vehicleActivity.sendSpake2PlusRequestSuccessfully(vin, requestWrapper.request().encode());
+	status = vehicleActivity.sendSpake2PlusRequestSuccessfully(vin, requestWrapper.request().encode(), requestId);
 	log.info("Send SPAKE2+ Request to Device: {}", status);
 
 	Workflow.await(()-> !message.isEmpty());
@@ -49,7 +49,7 @@ public class Spake2PlusVehicleWorkFlowImpl implements Spake2PlusVehicleWorkFlow 
 	  requestWrapper.config()
 	);
 	log.info("SPAKE2+ Verify Command: {}", verifyCommandTlv.encode());
-	status = vehicleActivity.sendSpake2PlusVerifyCommandSuccessfully(vin, verifyCommandTlv.encode());
+	status = vehicleActivity.sendSpake2PlusVerifyCommandSuccessfully(vin, verifyCommandTlv.encode(), requestId);
 	log.info("Send SPAKE2+ Verify Command to Device: {} ", status);
 
 	Workflow.await(()-> !message.isEmpty());

@@ -7,7 +7,7 @@ import io.temporal.workflow.WorkflowMethod;
 @WorkflowInterface
 public interface Spake2PlusVehicleWorkFlow {
   @WorkflowMethod
-  String startVehicleWorkflow(String vin, String password, String salt);
+  String startVehicleWorkflow(String vin, String password, String salt, String requestId);
   @SignalMethod
   void receiveMessageFromVehicle(String messagePayload);
 }

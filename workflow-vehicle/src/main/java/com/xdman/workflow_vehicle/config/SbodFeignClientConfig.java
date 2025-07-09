@@ -15,11 +15,23 @@ public class SbodFeignClientConfig {
   public RequestInterceptor requestInterceptorWithDKCHeader() {
 	return requestTemplate -> {
 	  try {
-//		HttpServletRequest requestHeader = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
-//		String requestId = requestHeader.getHeader("x-requestId");
-//		UUID uuid = UUID.randomUUID();
+		// Try to get x-requestId from current request context
+		String requestId = null;
+		try {
+		  HttpServletRequest requestHeader = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
+		  requestId = requestHeader.getHeader("x-requestId");
+		} catch (Exception e) {
+		  // RequestContextHolder might not be available in some contexts (e.g., async operations)
+		  // This is expected and we'll generate a new UUID below
+		}
+
+		// If no x-requestId found in current request, generate a new UUID
+		if (requestId == null || requestId.trim().isEmpty()) {
+		  requestId = UUID.randomUUID().toString();
+		}
+
 		String currentTime = String.valueOf(System.currentTimeMillis() / 1000);
-		requestTemplate.header("x-requestId", "7d89f678-test-4b51-b4d7a");
+		requestTemplate.header("x-requestId", requestId);
 //		requestTemplate.header("x-fmsId", "DKC-Test");
 //		requestTemplate.header("timestamp", currentTime);
 //		requestTemplate.header("x-sbodId", "workflow");

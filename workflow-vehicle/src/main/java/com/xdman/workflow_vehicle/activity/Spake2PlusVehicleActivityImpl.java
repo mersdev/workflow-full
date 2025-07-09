@@ -38,8 +38,8 @@ public class Spake2PlusVehicleActivityImpl implements Spake2PlusVehicleActivity 
   }
 
   @Override
-  public String sendSelectCommandSuccessfully(String vin, String selectCommand) {
-	ReceivedFromVehicleResponse response = sbodService.receiveFromVehicle(vin, selectCommand);
+  public String sendSelectCommandSuccessfully(String vin, String selectCommand, String requestId) {
+	ReceivedFromVehicleResponse response = sbodService.receiveFromVehicle(vin, selectCommand, requestId);
 	return response.message();
   }
 
@@ -54,8 +54,8 @@ public class Spake2PlusVehicleActivityImpl implements Spake2PlusVehicleActivity 
   }
 
   @Override
-  public String sendSpake2PlusRequestSuccessfully(String vin, String spake2PlusRequestCommand) {
-	ReceivedFromVehicleResponse response = sbodService.receiveFromVehicle(vin,spake2PlusRequestCommand);
+  public String sendSpake2PlusRequestSuccessfully(String vin, String spake2PlusRequestCommand, String requestId) {
+	ReceivedFromVehicleResponse response = sbodService.receiveFromVehicle(vin, spake2PlusRequestCommand, requestId);
 	return response.message();
   }
 
@@ -73,8 +73,8 @@ public class Spake2PlusVehicleActivityImpl implements Spake2PlusVehicleActivity 
   }
 
   @Override
-  public String sendSpake2PlusVerifyCommandSuccessfully(String vin, String spake2PlusVerifyCommand) {
-	ReceivedFromVehicleResponse request = sbodService.receiveFromVehicle(vin, spake2PlusVerifyCommand);
+  public String sendSpake2PlusVerifyCommandSuccessfully(String vin, String spake2PlusVerifyCommand, String requestId) {
+	ReceivedFromVehicleResponse request = sbodService.receiveFromVehicle(vin, spake2PlusVerifyCommand, requestId);
 	return request.message();
   }
 

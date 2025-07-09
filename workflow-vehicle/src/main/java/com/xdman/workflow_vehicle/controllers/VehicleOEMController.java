@@ -7,6 +7,7 @@ import com.xdman.workflow_vehicle.model.response.SendToVehicleResponse;
 import com.xdman.workflow_vehicle.model.response.StartFullOwnerPairingResponse;
 import com.xdman.workflow_vehicle.service.SbodService;
 import com.xdman.workflow_vehicle.service.SendToVehicleService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@Slf4j
 public class VehicleOEMController {
   @Autowired
   private SendToVehicleService sendToVehicleService;
@@ -37,9 +39,17 @@ public class VehicleOEMController {
 	@PathVariable("vin") String vin,
 	@RequestBody SendToVehicleRequest request
 	){
-	String message = sendToVehicleService.sendToVehicle(vin, request.messagePayload());
-	SendToVehicleResponse response = new SendToVehicleResponse(message);
-	return new ResponseEntity<>(response, HttpStatus.OK);
+	try {
+	  log.info("Received sendToVehicle request for VIN: {}, message: {}", vin, request.messagePayload());
+	  String message = sendToVehicleService.sendToVehicle(vin, request.messagePayload());
+	  SendToVehicleResponse response = new SendToVehicleResponse(message);
+	  return new ResponseEntity<>(response, HttpStatus.OK);
+	} catch (Exception e) {
+	  log.error("Error processing sendToVehicle request for VIN: {}, error: {}", vin, e.getMessage(), e);
+	  // Return 200 OK with error message instead of 500 to prevent Feign client failures
+	  SendToVehicleResponse errorResponse = new SendToVehicleResponse("Error processing request: " + e.getMessage());
+	  return new ResponseEntity<>(errorResponse, HttpStatus.OK);
+	}
   }
 
   @PostMapping(value = "/startOwnerPairing/{vin}")

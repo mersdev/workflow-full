@@ -22,6 +22,7 @@ public interface SbodClient {
   )
   ReceivedFromVehicleResponse receivedFromVehicle(
 	@PathVariable("vin") String vin,
-	@RequestBody ReceivedFromVehicleRequest messagePayload
+	@RequestBody ReceivedFromVehicleRequest messagePayload,
+	@RequestHeader("x-requestId") String requestId
   );
 }

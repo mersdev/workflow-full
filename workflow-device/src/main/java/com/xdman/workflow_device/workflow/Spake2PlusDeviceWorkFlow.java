@@ -8,7 +8,7 @@ import io.temporal.workflow.WorkflowMethod;
 @WorkflowInterface
 public interface Spake2PlusDeviceWorkFlow {
   @WorkflowMethod
-  void startDeviceOwnerPairing() throws Exception;
+  void startDeviceOwnerPairing(String requestId) throws Exception;
   @SignalMethod
   void receiveMessageFromVehicle(DeviceMessagePayload messagePayload);
 }

@@ -9,6 +9,6 @@ import org.springframework.stereotype.Component;
 public class DkcFallbackFactory implements FallbackFactory<DkcClient> {
   @Override
   public DkcClient create(Throwable cause) {
-	return (vin, messagePayload) -> new SendToVehicleResponse("Fallback response: Unable to send message to vehicle with VIN " + vin + ". Cause: " + cause.getMessage());
+	return (vin, messagePayload, requestId) -> new SendToVehicleResponse("Fallback response: Unable to send message to vehicle with VIN " + vin + " (requestId: " + requestId + "). Cause: " + cause.getMessage());
   }
 }

@@ -15,8 +15,8 @@ public class SbodFallbackFactory implements FallbackFactory<SbodClient> {
     return new SbodClient() {
 
       @Override
-      public ReceivedFromVehicleResponse receivedFromVehicle(String vin,  ReceivedFromVehicleRequest messagePayload) {
-        return new ReceivedFromVehicleResponse("Fallback response: Unable to process message from vehicle for VIN: " + vin);
+      public ReceivedFromVehicleResponse receivedFromVehicle(String vin, ReceivedFromVehicleRequest messagePayload, String requestId) {
+        return new ReceivedFromVehicleResponse("Fallback response: Unable to process message from vehicle for VIN: " + vin + " (requestId: " + requestId + ")");
       }
     };
   }

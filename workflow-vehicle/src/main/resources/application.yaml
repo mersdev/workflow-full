@@ -18,5 +18,5 @@ logging:
 
 api:
   sbod:
-   endpoint: "http://localhost:3030"
-#    endpoint: "http://localhost:8051/ext/vehicleoem/v1"
+#   endpoint: "http://localhost:3030"
+    endpoint: "http://localhost:8051/ext/vehicleoem/v1"

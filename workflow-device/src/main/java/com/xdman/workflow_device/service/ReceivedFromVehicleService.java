@@ -14,6 +14,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.Objects;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -31,8 +32,7 @@ public class ReceivedFromVehicleService {
     }
     log.info("Password: {}, salt: {}", password, salt);
 
-    HttpServletRequest requestHeader = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
-    String requestId = requestHeader.getHeader("x-requestId");
+    String requestId = getRequestIdFromContext();
     log.info("requestId: {}", requestId);
 
     Spake2PlusFullWorkFlow workFlow = workflowClient.newWorkflowStub(
@@ -60,8 +60,7 @@ public class ReceivedFromVehicleService {
     // Check if message contains VERIFY_COMMAND_HEADER and signal workflow
     if (message.contains(VERIFY_COMMAND_HEADER) || message.contains(REQUEST_COMMAND_HEADER)) {
       log.info("Request or Verify command detected, signaling workflow");
-      HttpServletRequest requestHeader = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
-      String requestId = requestHeader.getHeader("x-requestId");
+      String requestId = getRequestIdFromContext();
       log.info("requestId for signaling: {}", requestId);
       return signalWorkFlow(requestId, vin, message);
     }
@@ -78,8 +77,7 @@ public class ReceivedFromVehicleService {
     }
     log.info("Message: {}", message);
 
-    HttpServletRequest requestHeader = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
-    String requestId = requestHeader.getHeader("x-requestId");
+    String requestId = getRequestIdFromContext();
     log.info("requestId: {}", requestId);
 
     Spake2PlusDeviceWorkFlow workFlow = workflowClient.newWorkflowStub(
@@ -91,7 +89,7 @@ public class ReceivedFromVehicleService {
 
     WorkflowClient.start(() -> {
       try {
-        workFlow.startDeviceOwnerPairing();
+        workFlow.startDeviceOwnerPairing(requestId);
       } catch (Exception e) {
         throw new RuntimeException(e);
       }
@@ -101,8 +99,37 @@ public class ReceivedFromVehicleService {
   }
 
   private String signalWorkFlow(String requestId, String vin, String tlvMessage) {
-    Spake2PlusDeviceWorkFlow workFlow = workflowClient.newWorkflowStub(Spake2PlusDeviceWorkFlow.class, requestId);
-    workFlow.receiveMessageFromVehicle(new DeviceMessagePayload(vin, tlvMessage));
-    return "Received a message from vehicle successfully " + tlvMessage;
+    try {
+      log.info("Attempting to signal device workflow with requestId: {}", requestId);
+      Spake2PlusDeviceWorkFlow workFlow = workflowClient.newWorkflowStub(Spake2PlusDeviceWorkFlow.class, requestId);
+      workFlow.receiveMessageFromVehicle(new DeviceMessagePayload(vin, tlvMessage));
+      log.info("Successfully signaled device workflow with requestId: {}", requestId);
+      return "Received a message from vehicle successfully " + tlvMessage;
+    } catch (Exception e) {
+      log.error("Failed to signal device workflow with requestId: {}, error: {}", requestId, e.getMessage(), e);
+      // Instead of throwing an exception, return a descriptive error message
+      return "Warning: Could not signal device workflow with requestId " + requestId + ". Workflow may not exist yet. Error: " + e.getMessage();
+    }
+  }
+
+  /**
+   * Safely extracts x-requestId from the current request context.
+   * If no x-requestId is found or request context is not available, generates a new UUID.
+   */
+  private String getRequestIdFromContext() {
+    try {
+      HttpServletRequest requestHeader = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
+      String requestId = requestHeader.getHeader("x-requestId");
+      if (requestId != null && !requestId.trim().isEmpty()) {
+        return requestId;
+      }
+    } catch (Exception e) {
+      log.warn("Could not extract x-requestId from request context: {}", e.getMessage());
+    }
+
+    // Generate a new UUID if no x-requestId found
+    String generatedId = UUID.randomUUID().toString();
+    log.info("Generated new requestId: {}", generatedId);
+    return generatedId;
   }
 }

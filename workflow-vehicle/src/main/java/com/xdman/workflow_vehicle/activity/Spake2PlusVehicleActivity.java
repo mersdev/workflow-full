@@ -12,15 +12,15 @@ import io.temporal.activity.ActivityInterface;
 @ActivityInterface
 public interface Spake2PlusVehicleActivity {
   String createSelectCommandSuccessfully(String vin);
-  String sendSelectCommandSuccessfully(String vin, String selectCommand);
+  String sendSelectCommandSuccessfully(String vin, String selectCommand, String requestId);
   ResponseToSelectCommandTlv receiveSelectResponseSuccessfully(String message);
   Spake2PlusRequestWrapper createSpake2PlusRequestSuccessfully(String password, String salt);
-  String sendSpake2PlusRequestSuccessfully(String vin, String spake2PlusRequestCommand);
+  String sendSpake2PlusRequestSuccessfully(String vin, String spake2PlusRequestCommand, String requestId);
   Spake2PlusRequestResponseTlv receiveSpake2PlusResponseSuccessfully(String message);
   Spake2PlusVerifyCommandTlv createSpake2PlusVerifyCommandSuccessfully(
 	Spake2PlusRequestResponseTlv spake2PlusRequestResponseTlv,
 	Spake2PlusVehicleData config
   );
-  String sendSpake2PlusVerifyCommandSuccessfully(String vin, String spake2PlusVerifyCommand);
+  String sendSpake2PlusVerifyCommandSuccessfully(String vin, String spake2PlusVerifyCommand, String requestId);
   Spake2PlusVerifyResponseTlv receiveSpake2PlusVerifyResponseCommandSuccessfully(String message);
 }

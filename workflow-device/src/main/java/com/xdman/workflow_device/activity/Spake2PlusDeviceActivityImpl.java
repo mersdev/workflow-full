@@ -40,8 +40,8 @@ public class Spake2PlusDeviceActivityImpl implements Spake2PlusDeviceActivity {
   }
 
   @Override
-  public String sendSelectResponseSuccessfully(String vin, String message) throws Exception {
-	return dkcService.publishCommandMessageToDkc(vin, message);
+  public String sendSelectResponseSuccessfully(String vin, String message, String requestId) throws Exception {
+	return dkcService.publishCommandMessageToDkc(vin, message, requestId);
   }
 
   @Override
@@ -55,8 +55,8 @@ public class Spake2PlusDeviceActivityImpl implements Spake2PlusDeviceActivity {
   }
 
   @Override
-  public String sendSpake2PlusResponseSuccessfully(String vin, String message) throws Exception {
-	return dkcService.publishCommandMessageToDkc(vin, message);
+  public String sendSpake2PlusResponseSuccessfully(String vin, String message, String requestId) throws Exception {
+	return dkcService.publishCommandMessageToDkc(vin, message, requestId);
   }
 
   @Override
@@ -70,7 +70,7 @@ public class Spake2PlusDeviceActivityImpl implements Spake2PlusDeviceActivity {
   }
 
   @Override
-  public String sendSpake2PlusVerifyResponseSuccessfully(String vin, String message) throws Exception {
-	return dkcService.publishCommandMessageToDkc(vin, message);
+  public String sendSpake2PlusVerifyResponseSuccessfully(String vin, String message, String requestId) throws Exception {
+	return dkcService.publishCommandMessageToDkc(vin, message, requestId);
   }
 }

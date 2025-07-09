@@ -13,9 +13,14 @@ public class DkcService  {
 	this.dkcClient = dkcClient;
   }
 
-  public String publishCommandMessageToDkc(String vin, String commandMessage) throws Exception {
-	SendToVehicleResponse response = dkcClient.sendMessageToVehicle(vin, new SendToVehicleRequest(commandMessage));
+  public String publishCommandMessageToDkc(String vin, String commandMessage, String requestId) throws Exception {
+	SendToVehicleResponse response = dkcClient.sendMessageToVehicle(vin, new SendToVehicleRequest(commandMessage), requestId);
 	return response.message();
+  }
+
+  // Backward compatibility method
+  public String publishCommandMessageToDkc(String vin, String commandMessage) throws Exception {
+	return publishCommandMessageToDkc(vin, commandMessage, java.util.UUID.randomUUID().toString());
   }
 
 }
