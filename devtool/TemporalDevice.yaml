@@ -1,0 +1,129 @@
+version: '3'
+
+vars:
+  POD_NAME: temporal-device-pod
+  CONTAINER_PREFIX: temporal-device
+  POSTGRES_PORT: 5433
+  TEMPORAL_PORT: 7234
+  UI_PORT: 8081
+  APP_PORT: 3030
+
+tasks:
+  up:
+    desc: Start Temporal Device pod with all services
+    cmds:
+      - echo "🚀 Starting Temporal Device pod..."
+      - task: create:pod
+      - task: create:containers
+      - echo "⏳ Waiting for services to be ready..."
+      - sleep 15
+      - echo "✅ Temporal Device pod started successfully"
+      - echo "📊 Temporal UI available at http://localhost:{{.UI_PORT}}"
+      - echo "🔗 Temporal Server available at localhost:{{.TEMPORAL_PORT}}"
+      - echo "🗄️  PostgreSQL available at localhost:{{.POSTGRES_PORT}}"
+
+  create:pod:
+    desc: Create Temporal Device pod
+    cmds:
+      - echo "� Creating Temporal Device pod..."
+      - podman pod create --name {{.POD_NAME}} --publish {{.POSTGRES_PORT}}:5432 --publish {{.TEMPORAL_PORT}}:7233 --publish {{.UI_PORT}}:8080 || echo "Pod already exists"
+
+  create:containers:
+    desc: Create all containers in the pod
+    cmds:
+      - echo "�️  Creating PostgreSQL container..."
+      - podman run -d --pod {{.POD_NAME}} --name {{.CONTAINER_PREFIX}}-postgresql -e POSTGRES_PASSWORD=temporal -e POSTGRES_USER=temporal -e POSTGRES_DB=temporal postgres:13 || echo "PostgreSQL container already exists"
+      - echo "� Creating Elasticsearch container..."
+      - podman run -d --pod {{.POD_NAME}} --name {{.CONTAINER_PREFIX}}-elasticsearch -e cluster.routing.allocation.disk.threshold_enabled=false -e discovery.type=single-node -e ES_JAVA_OPTS="-Xms100m -Xmx100m" -e xpack.security.enabled=false elasticsearch:7.17.0 || echo "Elasticsearch container already exists"
+      - echo "⚡ Creating Temporal server container..."
+      - podman run -d --pod {{.POD_NAME}} --name {{.CONTAINER_PREFIX}} -e DB=postgresql -e DB_PORT=5432 -e POSTGRES_USER=temporal -e POSTGRES_PWD=temporal -e POSTGRES_SEEDS=localhost -e ENABLE_ES=true -e ES_SEEDS=localhost -e ES_VERSION=v7 temporalio/auto-setup:1.22.0 || echo "Temporal server container already exists"
+      - echo "🌐 Creating Temporal UI container..."
+      - podman run -d --pod {{.POD_NAME}} --name {{.CONTAINER_PREFIX}}-ui -e TEMPORAL_ADDRESS=localhost:7233 -e TEMPORAL_CORS_ORIGINS=http://localhost:3000 temporalio/ui:2.21.0 || echo "Temporal UI container already exists"
+      - echo "🛠️  Creating admin tools container..."
+      - podman run -d --pod {{.POD_NAME}} --name {{.CONTAINER_PREFIX}}-admin-tools -e TEMPORAL_CLI_ADDRESS=localhost:7233 temporalio/admin-tools:1.22.0 tail -f /dev/null || echo "Admin tools container already exists"
+
+  down:
+    desc: Stop and remove Temporal Device pod
+    cmds:
+      - echo "🛑 Stopping Temporal Device pod..."
+      - podman pod stop {{.POD_NAME}} || echo "Pod not running"
+      - podman pod rm {{.POD_NAME}} || echo "Pod not found"
+      - echo "✅ Temporal Device pod stopped and removed"
+
+  restart:
+    desc: Restart Temporal Device pod
+    cmds:
+      - task: down
+      - sleep 2
+      - task: up
+
+  logs:
+    desc: Show logs for Temporal Device services
+    cmds:
+      - echo "📋 Temporal Device Logs:"
+      - podman logs {{.CONTAINER_PREFIX}} --tail=50
+
+  logs:all:
+    desc: Show logs for all containers in the pod
+    cmds:
+      - echo "📋 All Temporal Device Container Logs:"
+      - podman pod logs {{.POD_NAME}} --tail=50
+
+  status:
+    desc: Show status of Temporal Device pod and containers
+    cmds:
+      - echo "� Temporal Device Pod Status:"
+      - podman pod ls --filter "name={{.POD_NAME}}"
+      - echo ""
+      - echo "📊 Container Status:"
+      - podman ps --filter "pod={{.POD_NAME}}" --format "table {{`{{.Names}}`}}\t{{`{{.Status}}`}}\t{{`{{.Image}}`}}"
+
+  health:
+    desc: Check health of Temporal Device services
+    cmds:
+      - echo "🏥 Checking Temporal Device service health..."
+      - podman pod ps {{.POD_NAME}}
+
+  clean:
+    desc: Stop and remove Temporal Device pod and containers
+    cmds:
+      - echo "🧹 Cleaning up Temporal Device services..."
+      - podman pod stop {{.POD_NAME}} || echo "Pod not running"
+      - podman pod rm {{.POD_NAME}} || echo "Pod not found"
+      - echo "✅ Temporal Device cleanup completed"
+
+  shell:temporal:
+    desc: Open shell in Temporal Device admin tools container
+    cmds:
+      - podman exec -it {{.CONTAINER_PREFIX}}-admin-tools bash
+
+  shell:postgres:
+    desc: Connect to Temporal Device PostgreSQL database
+    cmds:
+      - podman exec -it {{.CONTAINER_PREFIX}}-postgresql psql -U temporal -d temporal
+
+  workflow:list:
+    desc: List workflows in Temporal Device
+    cmds:
+      - podman exec {{.CONTAINER_PREFIX}}-admin-tools tctl workflow list
+
+  workflow:describe:
+    desc: Describe a workflow (usage{{":"}} task workflow{{":"}}describe WORKFLOW_ID=<id>)
+    cmds:
+      - podman exec {{.CONTAINER_PREFIX}}-admin-tools tctl workflow describe -w {{.WORKFLOW_ID}}
+
+  namespace:list:
+    desc: List namespaces in Temporal Device
+    cmds:
+      - podman exec {{.CONTAINER_PREFIX}}-admin-tools tctl namespace list
+
+  ports:
+    desc: Show port mappings for Temporal Device services
+    cmds:
+      - echo "🔌 Temporal Device Port Mappings:"
+      - echo "  PostgreSQL{{":"}} localhost{{":"}}{{.POSTGRES_PORT}} → container{{":"}}5432"
+      - echo "  Temporal Server{{":"}} localhost{{":"}}{{.TEMPORAL_PORT}} → container{{":"}}7233"
+      - echo "  Temporal UI{{":"}} localhost{{":"}}{{.UI_PORT}} → container{{":"}}8080"
+      - echo ""
+      - echo "📊 Current pod ports:"
+      - podman port --all | grep "{{.POD_NAME}}" || echo "  No {{.POD_NAME}} pod currently running"

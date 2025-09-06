@@ -1,0 +1,116 @@
+version: '3'
+
+includes:
+  device:
+    taskfile: ./TemporalDevice.yaml
+    dir: .
+  vehicle:
+    taskfile: ./TemporalVehicle.yaml
+    dir: .
+
+tasks:
+  # Quick shortcuts for common operations
+  device:
+    desc: 🚗 Start Temporal Device pod
+    cmds:
+      - task: device:up
+
+  vehicle:
+    desc: 🚙 Start Temporal Vehicle pod
+    cmds:
+      - task: vehicle:up
+
+  # Combined operations
+  up:
+    desc: 🚀 Start both Device and Vehicle Temporal pods
+    cmds:
+      - echo "🚀 Starting all Temporal workflow pods..."
+      - task: device:up
+      - task: vehicle:up
+      - echo "✅ All Temporal workflow pods started!"
+
+  down:
+    desc: 🛑 Stop both Device and Vehicle Temporal pods
+    cmds:
+      - echo "🛑 Stopping all Temporal workflow pods..."
+      - task: device:down
+      - task: vehicle:down
+      - echo "✅ All Temporal workflow pods stopped!"
+
+  restart:
+    desc: 🔄 Restart both Device and Vehicle Temporal pods
+    cmds:
+      - task: down
+      - sleep 3
+      - task: up
+
+  # Global utility tasks
+  status:
+    desc: 📊 Show status of all Temporal pods and containers
+    cmds:
+      - echo "📊 All Temporal Pod Status:"
+      - podman pod ls --filter "name=temporal"
+      - echo ""
+      - echo "📊 All Temporal Container Status:"
+      - podman ps -a --filter "name=temporal" --format "table {{`{{.Names}}`}}\t{{`{{.Status}}`}}\t{{`{{.Pod}}`}}"
+
+  clean:
+    desc: 🧹 Clean up all Temporal pods and containers
+    cmds:
+      - echo "🧹 Cleaning up all Temporal pods..."
+      - task: device:clean
+      - task: vehicle:clean
+      - echo "🗑️  Removing unused containers and networks..."
+      - podman system prune -f
+      - echo "✅ Complete cleanup finished!"
+
+  logs:
+    desc: 📋 Show logs for all Temporal services
+    cmds:
+      - echo "📋 Recent logs from all Temporal services:"
+      - task: device:logs
+      - echo ""
+      - task: vehicle:logs
+
+  health:
+    desc: 🏥 Check health of all Temporal pods
+    cmds:
+      - echo "🏥 Checking health of all Temporal pods..."
+      - task: device:health
+      - echo ""
+      - task: vehicle:health
+
+  ports:
+    desc: 🔌 Show port mappings for all Temporal pods
+    cmds:
+      - echo "🔌 Temporal Workflow Port Mappings:"
+      - echo ""
+      - task: device:ports
+      - echo ""
+      - task: vehicle:ports
+      - echo ""
+      - echo "📊 All current pod ports:"
+      - podman port --all
+
+  # Development shortcuts
+  dev:setup:
+    desc: 🛠️  Complete development setup for Temporal workflows
+    cmds:
+      - echo "🛠️  Setting up complete Temporal development environment..."
+      - task: up
+      - echo "⏳ Waiting for services to be ready..."
+      - sleep 15
+      - task: health
+      - echo "🎉 Development environment ready!"
+      - echo ""
+      - echo "🔗 Access URLs:"
+      - echo "  Device Temporal UI{{":"}} http://localhost:8081"
+      - echo "  Vehicle Temporal UI{{":"}} http://localhost:8082"
+
+  dev:reset:
+    desc: 🔄 Reset development environment (clean + setup)
+    cmds:
+      - echo "🔄 Resetting development environment..."
+      - task: clean
+      - sleep 5
+      - task: dev:setup
