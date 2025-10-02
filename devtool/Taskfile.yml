@@ -99,7 +99,7 @@ tasks:
       - echo "🛠️  Setting up complete Temporal development environment..."
       - task: up
       - echo "⏳ Waiting for services to be ready..."
-      - sleep 15
+      - sleep 45
       - task: health
       - echo "🎉 Development environment ready!"
       - echo ""

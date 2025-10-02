@@ -31,14 +31,17 @@ tasks:
   create:containers:
     desc: Create all containers in the pod
     cmds:
-      - echo "�️  Creating PostgreSQL container..."
+      - echo "🗄️  Creating PostgreSQL container..."
       - podman run -d --pod {{.POD_NAME}} --name {{.CONTAINER_PREFIX}}-postgresql -e POSTGRES_PASSWORD=temporal -e POSTGRES_USER=temporal -e POSTGRES_DB=temporal postgres:13 || echo "PostgreSQL container already exists"
-      - echo "� Creating Elasticsearch container..."
-      - podman run -d --pod {{.POD_NAME}} --name {{.CONTAINER_PREFIX}}-elasticsearch -e cluster.routing.allocation.disk.threshold_enabled=false -e discovery.type=single-node -e ES_JAVA_OPTS="-Xms100m -Xmx100m" -e xpack.security.enabled=false elasticsearch:7.17.0 || echo "Elasticsearch container already exists"
+      - echo "⏳ Waiting for PostgreSQL to be ready..."
+      - echo "🔧 Setting up Temporal database schema..."
+      - podman run --rm --pod {{.POD_NAME}} -e SQL_PLUGIN=postgres -e SQL_HOST=localhost -e SQL_PORT=5432 -e SQL_USER=temporal -e SQL_PASSWORD=temporal -e SQL_DATABASE=temporal temporalio/admin-tools:1.22.0 temporal-sql-tool create-database -database temporal || echo "Database already exists"
+      - podman run --rm --pod {{.POD_NAME}} -e SQL_PLUGIN=postgres -e SQL_HOST=localhost -e SQL_PORT=5432 -e SQL_USER=temporal -e SQL_PASSWORD=temporal -e SQL_DATABASE=temporal temporalio/admin-tools:1.22.0 temporal-sql-tool setup-schema -v 0.0 || echo "Schema already exists"
       - echo "⚡ Creating Temporal server container..."
-      - podman run -d --pod {{.POD_NAME}} --name {{.CONTAINER_PREFIX}} -e DB=postgresql -e DB_PORT=5432 -e POSTGRES_USER=temporal -e POSTGRES_PWD=temporal -e POSTGRES_SEEDS=localhost -e ENABLE_ES=true -e ES_SEEDS=localhost -e ES_VERSION=v7 temporalio/auto-setup:1.22.0 || echo "Temporal server container already exists"
+      - podman run -d --pod {{.POD_NAME}} --name {{.CONTAINER_PREFIX}} -e DB=postgresql -e DB_PORT=5432 -e POSTGRES_USER=temporal -e POSTGRES_PWD=temporal -e POSTGRES_SEEDS=localhost temporalio/server:1.22.0 || echo "Temporal server container already exists"
+      - echo "⏳ Waiting for Temporal server to be ready..."
       - echo "🌐 Creating Temporal UI container..."
-      - podman run -d --pod {{.POD_NAME}} --name {{.CONTAINER_PREFIX}}-ui -e TEMPORAL_ADDRESS=localhost:7233 -e TEMPORAL_CORS_ORIGINS=http://localhost:3000 temporalio/ui:2.21.0 || echo "Temporal UI container already exists"
+      - podman run -d --pod {{.POD_NAME}} --name {{.CONTAINER_PREFIX}}-ui -e TEMPORAL_ADDRESS=localhost:7233 -e TEMPORAL_CORS_ORIGINS=http://localhost:3000,http://localhost:8081 temporalio/ui:2.21.0 || echo "Temporal UI container already exists"
       - echo "🛠️  Creating admin tools container..."
       - podman run -d --pod {{.POD_NAME}} --name {{.CONTAINER_PREFIX}}-admin-tools -e TEMPORAL_CLI_ADDRESS=localhost:7233 temporalio/admin-tools:1.22.0 tail -f /dev/null || echo "Admin tools container already exists"
 
