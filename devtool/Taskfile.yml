@@ -64,6 +64,20 @@ tasks:
       - podman system prune -f
       - echo "✅ Complete cleanup finished!"
 
+  force-clean:
+    desc: 🧹 Force clean all Temporal resources (nuclear option)
+    cmds:
+      - echo "💥 Force cleaning all Temporal resources..."
+      - echo "🛑 Stopping all temporal containers..."
+      - podman stop $(podman ps -q --filter "name=temporal") || echo "No temporal containers running"
+      - echo "🗑️  Force removing all temporal containers..."
+      - podman rm -f $(podman ps -aq --filter "name=temporal") || echo "No temporal containers found"
+      - echo "🗑️  Force removing all temporal pods..."
+      - podman pod rm -f $(podman pod ls -q --filter "name=temporal") || echo "No temporal pods found"
+      - echo "🗑️  Cleaning up system..."
+      - podman system prune -f
+      - echo "✅ Nuclear cleanup completed!"
+
   logs:
     desc: 📋 Show logs for all Temporal services
     cmds:
@@ -107,10 +121,40 @@ tasks:
       - echo "  Device Temporal UI{{":"}} http://localhost:8081"
       - echo "  Vehicle Temporal UI{{":"}} http://localhost:8082"
 
+  help:
+    desc: 📖 Show available tasks and their descriptions
+    cmds:
+      - echo "📖 Available Temporal Workflow Tasks:"
+      - echo ""
+      - echo "🚀 Quick Start:"
+      - echo "  task dev:setup    - Complete development setup"
+      - echo "  task dev:reset    - Reset environment (force-clean + setup)"
+      - echo ""
+      - echo "🎛️  Individual Services:"
+      - echo "  task device       - Start Device pod"
+      - echo "  task vehicle      - Start Vehicle pod"
+      - echo ""
+      - echo "🔄 Management:"
+      - echo "  task up           - Start both pods"
+      - echo "  task down         - Stop both pods"
+      - echo "  task restart      - Restart both pods"
+      - echo "  task clean        - Clean up pods and containers"
+      - echo "  task force-clean  - Nuclear cleanup (force remove all)"
+      - echo ""
+      - echo "📊 Monitoring:"
+      - echo "  task status       - Show pod and container status"
+      - echo "  task health       - Check health of all services"
+      - echo "  task logs         - Show logs from all services"
+      - echo "  task ports        - Show port mappings"
+      - echo ""
+      - echo "🔗 Access URLs:"
+      - echo "  Device Temporal UI{{":"}} http://localhost:8081"
+      - echo "  Vehicle Temporal UI{{":"}} http://localhost:8082"
+
   dev:reset:
-    desc: 🔄 Reset development environment (clean + setup)
+    desc: 🔄 Reset development environment (force-clean + setup)
     cmds:
       - echo "🔄 Resetting development environment..."
-      - task: clean
+      - task: force-clean
       - sleep 5
       - task: dev:setup

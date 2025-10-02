@@ -55,7 +55,7 @@ task restart          # 🔄 Restart both workflows
 
 # Development environment
 task dev:setup        # 🛠️  Complete development setup
-task dev:reset        # 🔄 Reset environment (clean + setup)
+task dev:reset        # 🔄 Reset environment (force-clean + setup)
 ```
 
 ### Device-Specific Commands
@@ -165,7 +165,7 @@ task vehicle:shell:postgres  # Check vehicle database
 ```bash
 cd devtool
 task dev:reset
-# This will clean everything and set up fresh
+# This will force-clean everything and set up fresh
 ```
 
 ## 🔧 Pod-Based Architecture
